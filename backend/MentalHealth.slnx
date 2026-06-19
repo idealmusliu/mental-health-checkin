@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MentalHealth.Api/MentalHealth.Api.csproj" />
+    <Project Path="src/MentalHealth.Application/MentalHealth.Application.csproj" />
+    <Project Path="src/MentalHealth.Domain/MentalHealth.Domain.csproj" />
+    <Project Path="src/MentalHealth.Infrastructure/MentalHealth.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MentalHealth.Tests/MentalHealth.Tests.csproj" />
+  </Folder>
+</Solution>
