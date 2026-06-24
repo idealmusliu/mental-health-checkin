@@ -47,7 +47,9 @@ export function CurrentUserProvider({ children }: { children: ReactNode }) {
       currentUser,
       auth: currentUser ? { id: currentUser.id, role: currentUser.role } : null,
       setCurrentUserId: selectUser,
-      isLoading,
+      // True until the current user resolves; the length check lets it settle
+      // when there are genuinely no users to select.
+      isLoading: isLoading || (currentUser === null && (users?.length ?? 0) > 0),
     };
   }, [users, currentUserId, isLoading]);
 

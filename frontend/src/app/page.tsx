@@ -5,13 +5,14 @@ import { useState } from "react";
 import { useSWRConfig } from "swr";
 import { CheckInForm } from "@/components/CheckInForm";
 import { CheckInList } from "@/components/CheckInList";
+import { Loading } from "@/components/Loading";
 import { api, ApiError } from "@/lib/api";
 import { useCurrentUser } from "@/lib/current-user";
 import { useCheckIns, revalidateCheckInData } from "@/lib/hooks";
 import type { CheckInInput } from "@/lib/types";
 
 export default function HomePage() {
-  const { currentUser, auth } = useCurrentUser();
+  const { currentUser, auth, isLoading } = useCurrentUser();
   const { mutate } = useSWRConfig();
   const recent = useCheckIns({ userId: currentUser?.id, page: 1, pageSize: 5 });
 
@@ -34,6 +35,10 @@ export default function HomePage() {
       setSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   if (currentUser?.role === "Manager") {
     return (

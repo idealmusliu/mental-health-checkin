@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckInList } from "@/components/CheckInList";
 import { FilterBar } from "@/components/FilterBar";
+import { Loading } from "@/components/Loading";
 import { Pagination } from "@/components/Pagination";
 import { useCurrentUser } from "@/lib/current-user";
 import { useCheckIns } from "@/lib/hooks";
@@ -10,11 +11,15 @@ import { toQueryFilters } from "@/lib/filters";
 import type { CheckInFilters } from "@/lib/types";
 
 export default function CheckInsPage() {
-  const { users, currentUser } = useCurrentUser();
+  const { users, currentUser, isLoading: userLoading } = useCurrentUser();
   const isManager = currentUser?.role === "Manager";
 
   const [filters, setFilters] = useState<CheckInFilters>({ page: 1, pageSize: 10 });
   const { data, isLoading, error } = useCheckIns(toQueryFilters(filters));
+
+  if (userLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="space-y-5">

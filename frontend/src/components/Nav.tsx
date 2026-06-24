@@ -7,19 +7,21 @@ import { UserSwitcher } from "./UserSwitcher";
 
 export function Nav() {
   const pathname = usePathname();
-  const { currentUser } = useCurrentUser();
+  const { currentUser, isLoading } = useCurrentUser();
   const isManager = currentUser?.role === "Manager";
 
   // Employees submit + review their own; managers only review/track the team.
-  const links = isManager
-    ? [
-        { href: "/checkins", label: "Check-ins" },
-        { href: "/dashboard", label: "Dashboard" },
-      ]
-    : [
-        { href: "/", label: "New check-in" },
-        { href: "/checkins", label: "Check-ins" },
-      ];
+  const links = isLoading
+    ? []
+    : isManager
+      ? [
+          { href: "/checkins", label: "Check-ins" },
+          { href: "/dashboard", label: "Dashboard" },
+        ]
+      : [
+          { href: "/", label: "New check-in" },
+          { href: "/checkins", label: "Check-ins" },
+        ];
 
   const homeHref = isManager ? "/dashboard" : "/";
 

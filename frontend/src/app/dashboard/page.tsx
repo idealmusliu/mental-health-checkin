@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CheckInList } from "@/components/CheckInList";
 import { FilterBar } from "@/components/FilterBar";
+import { Loading } from "@/components/Loading";
 import { MoodTrendChart } from "@/components/MoodTrendChart";
 import { useCurrentUser } from "@/lib/current-user";
 import { useCheckIns, useDashboardStats } from "@/lib/hooks";
@@ -38,12 +39,16 @@ function StatCard({
 }
 
 export default function DashboardPage() {
-  const { users, currentUser } = useCurrentUser();
+  const { users, currentUser, isLoading } = useCurrentUser();
   const [filters, setFilters] = useState<CheckInFilters>({ page: 1, pageSize: 10 });
   const queryFilters = toQueryFilters(filters);
 
   const stats = useDashboardStats(queryFilters);
   const recent = useCheckIns(queryFilters);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   if (currentUser && currentUser.role !== "Manager") {
     return (
