@@ -125,8 +125,7 @@ public sealed class CheckInsController : ControllerBase
         return result.ToOk(this);
     }
 
-    // Reads require authentication (guarded above); employees are limited to their
-    // own check-ins, while managers are unrestricted.
+    // Employees are limited to their own check-ins; managers (and anonymous reads) are unrestricted.
     private Guid? EmployeeScope() =>
         _currentUser is { IsAuthenticated: true, IsManager: false } ? _currentUser.UserId : null;
 }
