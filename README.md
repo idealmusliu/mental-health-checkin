@@ -184,8 +184,8 @@ What each role can do (the rules are enforced in the API, not just the UI):
 | --- | --- | --- | --- |
 | Submit a check-in (`POST /checkins`) | ✅ for themselves | ❌ `403` | ❌ `401` |
 | Edit a check-in (`PUT /checkins/{id}`) | ✅ own only | ❌ `403` | ❌ `401` |
-| Get a check-in (`GET /checkins/{id}`) | ✅ own only (else `404`) | ✅ anyone's | open |
-| List check-ins (`GET /checkins`) | ✅ own only (auto-scoped) | ✅ everyone's | open |
+| Get a check-in (`GET /checkins/{id}`) | ✅ own only (else `404`) | ✅ anyone's | ❌ `401` |
+| List check-ins (`GET /checkins`) | ✅ own only (auto-scoped) | ✅ everyone's | ❌ `401` |
 | Dashboard (`GET /dashboard/stats`) | ❌ `403` | ✅ | ❌ `401` |
 
 A few details I was deliberate about:
@@ -202,7 +202,7 @@ Seeded users: **Alice Manager** (Manager) and **Bob / Carol / Dan** (Employees).
 ## Tests
 
 ```bash
-# Backend: 32 tests, EF Core in-memory provider, no database needed
+# Backend: 34 tests, EF Core in-memory provider, no database needed
 cd backend
 dotnet test
 

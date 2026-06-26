@@ -99,6 +99,7 @@ public class CheckInsControllerTests
     [Fact]
     public async Task GetById_WhenHandlerReturnsNotFound_Returns404Problem()
     {
+        SignInAsManager();
         _getById.Setup(h => h.Handle(It.IsAny<GetCheckInByIdQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result<CheckInDto>.NotFound("Check-in not found."));
         var controller = BuildController();
@@ -140,6 +141,28 @@ public class CheckInsControllerTests
         await controller.GetById(Guid.NewGuid(), default);
 
         captured!.RestrictToUserId.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task List_WhenUnauthenticated_Returns401()
+    {
+        var controller = BuildController();
+
+        var response = await controller.List(userId: null, from: null, to: null, page: 1, pageSize: 10, default);
+
+        response.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(401);
+        _list.Verify(h => h.Handle(It.IsAny<GetCheckInsQuery>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GetById_WhenUnauthenticated_Returns401()
+    {
+        var controller = BuildController();
+
+        var response = await controller.GetById(Guid.NewGuid(), default);
+
+        response.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(401);
+        _getById.Verify(h => h.Handle(It.IsAny<GetCheckInByIdQuery>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]

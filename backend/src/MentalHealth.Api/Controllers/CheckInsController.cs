@@ -65,6 +65,7 @@ public sealed class CheckInsController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(typeof(PagedResult<CheckInDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult> List(
         [FromQuery] Guid? userId,
         [FromQuery] DateTime? from,
@@ -73,6 +74,9 @@ public sealed class CheckInsController : ControllerBase
         [FromQuery] int pageSize = 10,
         CancellationToken ct = default)
     {
+        if (!_currentUser.IsAuthenticated)
+            return Problem(detail: "Authentication is required.", statusCode: StatusCodes.Status401Unauthorized);
+
         var query = new GetCheckInsQuery
         {
             UserId = EmployeeScope() ?? userId,
@@ -88,9 +92,13 @@ public sealed class CheckInsController : ControllerBase
 
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(CheckInDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> GetById(Guid id, CancellationToken ct)
     {
+        if (!_currentUser.IsAuthenticated)
+            return Problem(detail: "Authentication is required.", statusCode: StatusCodes.Status401Unauthorized);
+
         var result = await _getById.Handle(new GetCheckInByIdQuery(id, EmployeeScope()), ct);
         return result.ToOk(this);
     }
@@ -117,7 +125,8 @@ public sealed class CheckInsController : ControllerBase
         return result.ToOk(this);
     }
 
-    // Employees are limited to their own check-ins; managers (and anonymous reads) are unrestricted.
+    // Reads require authentication (guarded above); employees are limited to their
+    // own check-ins, while managers are unrestricted.
     private Guid? EmployeeScope() =>
         _currentUser is { IsAuthenticated: true, IsManager: false } ? _currentUser.UserId : null;
 }
